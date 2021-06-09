@@ -1,0 +1,526 @@
+%!TeX encoding = UTF-8
+%!TeX program = xelatex
+\documentclass[notheorems, aspectratio=169]{beamer}
+% aspectratio: 1610, 149, 54, 43(default), 32
+
+\usepackage{latexsym}
+\usepackage{amsmath,amssymb}
+\usepackage{mathtools}
+\usepackage{color,xcolor}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{algorithm} 
+\usepackage{graphics}
+\usepackage{mathcomp}
+\usepackage{textcomp}   
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{epstopdf}
+\usepackage{picinpar}
+\usepackage{verbatim}
+\usepackage{subfig}
+\usepackage{makeidx}
+\usepackage{mathtools} 
+\usepackage{pdfpages}
+\usepackage{textcomp}
+\usepackage{emptypage}
+\usepackage[section]{placeins}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usetikzlibrary{patterns}
+\usetikzlibrary{shadows,fadings}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows.meta,arrows}
+\usepackage[toc,page]{appendix}
+\usepackage{amsthm}
+\usepackage{lmodern} % 解决 font warning
+% \usepackage[UTF8]{ctex}
+\usepackage{animate} % insert gif
+
+\usepackage{lipsum} % To generate test text 
+\usepackage{ulem} % 下划线，波浪线
+
+\usepackage{listings} % display code on slides; don't forget [fragile] option after \begin{frame}
+
+\usepackage{tcolorbox}
+\usepackage{natbib}
+\setcitestyle{authoryear}
+
+
+
+% ----------------------------------------------
+% tikx
+\usepackage{framed}
+
+\usepackage{pgf}
+\usetikzlibrary{calc,trees,positioning,arrows,chains,shapes.geometric,%
+    decorations.pathreplacing,decorations.pathmorphing,shapes,%
+    matrix,shapes.symbols}
+\pgfmathsetseed{1} % To have predictable results
+% Define a background layer, in which the parchment shape is drawn
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+\definecolor{AmethystPurple}{HTML}{AEAEDF}
+\definecolor{myblue}{RGB}{1,75,182}
+% define styles for the normal border and the torn border
+\tikzset{
+  normal border/.style={black, decorate, 
+     decoration={random steps, segment length=2.5cm, amplitude=.7mm}},
+  torn border/.style={black, decorate, 
+     decoration={random steps, segment length=.5cm, amplitude=1.7mm}}}
+
+% Macro to draw the shape behind the text, when it fits completly in the
+% page
+\def\parchmentframe#1{
+\tikz{
+  \node[inner sep=1.5em] (A) {#1};  % Draw the text of the node
+  \begin{pgfonlayer}{background}  % Draw the shape behind
+  \fill[normal border] 
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text will continue in next page
+\def\parchmentframetop#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};    % Draw the text of the node
+  \begin{pgfonlayer}{background}    
+  \fill[normal border]              % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]                % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when the text continues from previous page
+\def\parchmentframebottom#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Macro to draw the shape, when both the text continues from previous page
+% and it will continue in next page
+\def\parchmentframemiddle#1{
+\tikz{
+  \node[inner sep=2em] (A) {#1};   % Draw the text of the node
+  \begin{pgfonlayer}{background}   
+  \fill[normal border]             % Draw the ``complete shape'' behind
+        (A.south east) -- (A.south west) -- 
+        (A.north west) -- (A.north east) -- cycle;
+  \fill[torn border]               % Add the torn lower border
+        ($(A.south east)-(0,.2)$) -- ($(A.south west)-(0,.2)$) -- 
+        ($(A.south west)+(0,.2)$) -- ($(A.south east)+(0,.2)$) -- cycle;
+  \fill[torn border]               % Add the torn upper border
+        ($(A.north east)-(0,.2)$) -- ($(A.north west)-(0,.2)$) -- 
+        ($(A.north west)+(0,.2)$) -- ($(A.north east)+(0,.2)$) -- cycle;
+  \end{pgfonlayer}}}
+
+% Define the environment which puts the frame
+% In this case, the environment also accepts an argument with an optional
+% title (which defaults to ``Example'', which is typeset in a box overlaid
+% on the top border
+\newenvironment{parchment}[1][Example]{%
+  \def\FrameCommand{\parchmentframe}%
+  \def\FirstFrameCommand{\parchmentframetop}%
+  \def\LastFrameCommand{\parchmentframebottom}%
+  \def\MidFrameCommand{\parchmentframemiddle}%
+  \vskip\baselineskip
+  \MakeFramed {\FrameRestore}
+  \noindent\tikz\node[inner sep=1ex, draw=black!20,fill=black, 
+          anchor=west, overlay] at (0em, 1em) {\sffamily#1};\par}%
+{\endMakeFramed}
+
+% ----------------------------------------------
+
+\mode<presentation>{
+    \usetheme{Warsaw}
+    % Boadilla CambridgeUS
+    % default Antibes Berlin Copenhagen
+    % Madrid Montpelier Ilmenau Malmoe
+    % Berkeley Singapore Warsaw
+    \usecolortheme{orchid}
+    % beetle, beaver, orchid, whale, dolphin
+    \useoutertheme{infolines}
+    % infolines miniframes shadow sidebar smoothbars smoothtree split tree
+    \useinnertheme{circles}
+    % circles, rectanges, rounded, inmargin
+}
+% 设置 block 颜色
+\setbeamercolor{block title}{bg=black,fg=white}
+
+\newcommand{\reditem}[1]{\setbeamercolor{item}{fg=red}\item #1}
+
+% 缩放公式大小
+\newcommand*{\Scale}[2][4]{\scalebox{#1}{\ensuremath{#2}}}
+
+% 解决 font warning
+\renewcommand\textbullet{\ensuremath{\bullet}}
+
+% ---------------------------------------------------------------------
+% flow chart
+\tikzset{
+    >=stealth',
+    punktchain/.style={
+        rectangle, 
+        rounded corners, 
+        % fill=black!10,
+        draw=white, very thick,
+        text width=6em,
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    largepunktchain/.style={
+        rectangle,
+        rounded corners,
+        draw=white, very thick,
+        text width=10em,
+        minimum height=2em,
+        on chain
+    },
+    line/.style={draw, thick, <-},
+    element/.style={
+        tape,
+        top color=white,
+        bottom color=blue!50!black!60!,
+        minimum width=6em,
+        draw=blue!40!black!90, very thick,
+        text width=6em, 
+        minimum height=2em, 
+        text centered, 
+        on chain
+    },
+    every join/.style={->, thick,shorten >=1pt},
+    decoration={brace},
+    tuborg/.style={decorate},
+    tubnode/.style={midway, right=2pt},
+    font={\fontsize{10pt}{12}\selectfont},
+}
+% ---------------------------------------------------------------------
+
+% code setting
+\lstset{
+    language=C++,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{red},
+    breaklines=true,
+    xleftmargin=2em,
+    frame=shadowbox,
+    rulecolor=\color{black},
+    commentstyle=\color{lightgray}
+    tabsize=4,
+    breakatwhitespace=false,
+    showspaces=false,               
+    showstringspaces=false,
+    showtabs=false,
+    morekeywords={Str, Num, List},
+}
+
+% ---------------------------------------------------------------------
+
+%% preamble
+\title[Introduction to OF Development]{Introduction to OpenFOAM Development}
+ \subtitle{Unit 1: Getting Familiar}
+ \author{Mustafa Bhotvawala, SkillLync}
+\institute[]{}
+\date{}
+% -------------------------------------------------------------
+
+
+
+\logo{\includegraphics[width=.2\textwidth]{pictures/header_logo.png}}
+
+\begin{document}
+
+%% title frame
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\begin{frame}
+  \begin{tcolorbox}
+  OpenFOAM® and OpenCFD® are registered trademarks of OpenCFD Limited, the producer of the OpenFOAM software. All registered trademarks are property of their respective owners. This offering is not approved or endorsed by OpenCFD Limited, the producer of the OpenFOAM software and owner of the OPENFOAM® and OpenCFD® trade marks. Mustafa Bhotvawala and SkillLync are not associated to OpenCFD.
+  \end{tcolorbox}
+\end{frame}
+
+
+
+%% normal frame
+\section{What is OpenFOAM?}
+\frame{\tableofcontents[currentsection]}
+
+\subsection{OpenFOAM - Introducing the toolbox}
+\begin{frame}
+\frametitle{OpenFOAM- Introducing the toolbox}
+
+\begin{itemize}
+  \item OpenFOAM is not a 'solver', but a C++ toolbox that comes 
+  bundled with a range of solvers, pre- and post processing utilities
+  \item Expands to Open Field of Operation And Manipulation
+  \item The applications created by OpenFOAM fall into two categories: \texttt{solvers} and \texttt{utilities}
+  \item \texttt{solvers} are the actual executables for the final fluid mechanics problem. \texttt{simpleFoam} is a well known one.
+  \item \texttt{utilities} perform tasks that provide and manipulate input/output to/from the \texttt{solvers}. \texttt{snappyHexMesh} provides the mesh input, for example.
+\end{itemize}
+
+
+\end{frame}
+
+
+\subsection{Structure overview}
+\begin{frame}
+\frametitle{Structure overview}
+\begin{itemize}
+  \item OpenFOAM cases are divided into three main folders. 
+\end{itemize}
+
+\begin{figure}[h!]
+  \begin{center}
+    \scalebox{.75}{\input{pictures/2_ofStructure.tex}}
+  \caption{OpenFOAM case structure}
+  \label{fig:ofStructure}
+  \end{center}
+  \end{figure}
+
+\end{frame}
+
+\section{Your choices}
+\frame{\tableofcontents[currentsection]}
+
+
+\subsection{Your version choices}
+\begin{frame}
+\frametitle{Your version choices}
+\begin{itemize}
+  \item Often confusing to new users, there are two different versions of OpenFOAM available
+  \item OpenFOAM$^{\tiny{\text{\textregistered}}}$ is a trademark of ESI-OpenCFD, which distributes it through www.openfoam.com. 
+  \item The OpenFOAM Foundation, which has the permission to use the trademark too, distributes the software through www.openfoam.org
+  \item ESI-OpenCFD uses a naming convention like this: "v1806" for the version released in the middle of 2018
+  \item The OpenFOAM Foundation uses a convention like "v5.0". The number is not linked to the date of release
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Your version choices}
+
+  Which version to choose?
+
+
+  \begin{itemize}
+  \item When in doubt, check and compare the release notes!
+  \item Different foam versions can coexist on the same system
+  \item For community-driven solvers, especially ones in solid mechanics, a third variant, foam-extend is also popular
+  \item I prefer the ESI-OpenCFD version but it is a matter of personal preference
+  \end{itemize}
+
+
+
+  \begin{figure}[!htb]
+    \centering
+    \begin{minipage}{.5\textwidth}
+        \centering
+        \includegraphics[width=0.3\linewidth]{pictures/openfoam.png}
+        \caption{ESI-OpenCFD}
+    \end{minipage}%
+    \begin{minipage}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.2\linewidth]{pictures/openfoam_found.png}
+        \caption{OpenFOAM Foundation}
+    \end{minipage}
+\end{figure}
+    
+\end{frame}
+
+\subsection{Your OS choices}
+\begin{frame}
+  \frametitle{Your OS choices}
+  \begin{itemize}
+  \item I will discuss the ESI-OpenCFD version henceforth unless mentioned otherwise
+  \item OpenFOAM compiles natively on Linux environments - but this doesn't mean there aren't workarounds!
+  \item Linux binary installations can be done either via Docker or via RPM (OpenSUSE)
+  \item If you use Linux, I recommend compiling from source
+  \item If you use Windows, use the Windows Subsystem for Linux (WSL)
+  \item If not a WSL fan, there are mingw and Docker versions on Windows
+
+\end{itemize}
+\end{frame}
+
+\section{Want to code?}
+\frame{\tableofcontents[currentsection]}
+\subsection{Solvers}
+
+\begin{frame}
+  \frametitle{Solvers}
+  \begin{itemize}
+   \item Basic: Laplace, potential flow
+   \item General: Incompressible and compressible flow
+   \item Multiphase: Euler-Euler, VOF 
+   \item Lagrangian: spray, combustion
+   \item Heat transfer: buoyancy-driven flows, conjugate heat transfer (CHT)
+  \end{itemize}
+  \end{frame}
+
+
+
+\subsection{Equations}
+\begin{frame}[fragile]
+\frametitle{Equations}
+A scalar transport equation as discretized in OpenFOAM
+\begin{figure}[!htb]
+  \centering
+  \begin{minipage}{.5\textwidth}
+   $$ \frac{\partial T}{\partial t}  + \mathbf{\nabla} \cdot (\mathbf{U} T)  - \mathbf{\nabla} \cdot (D \mathbf{\nabla} T)  $$
+  \end{minipage}%
+  \begin{minipage}{0.5\textwidth}
+      \centering
+      \begin{lstlisting}
+        solve
+(
+   fvm::ddt(T)             
+ + fvm::div(phi, T)        
+ - fvm::laplacian(DT, T)   
+);
+      \end{lstlisting}
+  \end{minipage}
+\end{figure}
+\end{frame}
+  
+  
+
+
+
+\section{Evolution of OpenFOAM}
+\frame{\tableofcontents[currentsection]}
+
+
+\subsection{Strong points}
+\begin{frame}
+\frametitle{Strong points}
+\begin{itemize}
+  \item Covered by a GNU Public License (GPL) - allows contribution to all these versions
+  \item CFD Simulation at no cost - ideal for learning!
+  \item Solver toolbox for a wide breadth of physical problems
+  \item Clear advantage if you have to implement new models in the code
+  \item Very active development
+  \item Industry leader in some areas, for example, viscoelastic models 
+\end{itemize}
+\end{frame}
+
+
+
+\subsection{State of the art}
+\begin{frame}
+\frametitle{State of the art}
+What's the new stuff? Some examples
+\begin{figure}[!htb]
+  \centering
+  \begin{minipage}{.4\textwidth}
+    \begin{itemize}
+      \item OpenFOAM 8 (Foundation) and OpenFOAM v2006 (ESI-OpenCFD) recently released
+      \item OpenFOAM v2006 brought new developments to a  gradient based optimization tool - adjoint method
+     \end{itemize}
+  \end{minipage}%
+  \begin{minipage}{0.4\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{pictures/adjoint.png}
+      \caption{Improved adjoint method numerics (v2006)}
+  \end{minipage}
+\end{figure}
+  
+\end{frame}
+
+\begin{frame}
+\frametitle{State of the art}
+What's the new stuff? Some examples
+\begin{figure}[!htb]
+  \centering
+  \begin{minipage}{.4\textwidth}
+    \begin{itemize}
+      \item Curle Function Object for near field term and has been refactored to compute the acoustic pressure for a set of points
+     \end{itemize}
+  \end{minipage}%
+  \begin{minipage}{0.4\textwidth}
+      \centering
+      \includegraphics[width=\linewidth]{pictures/curle.png}
+      \caption{A new Curle Function Object for Aeroacoustics (v2006)}
+  \end{minipage}
+\end{figure}
+  
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{State of the art}
+  Coupling 
+  \begin{figure}[!htb]
+    \centering
+    \begin{minipage}{.4\textwidth}
+      \begin{itemize}
+        \item OpenFOAM can be coupled with preCICE, a coupling library for partitioned multi-physics simulations
+        \item This gives OpenFOAM an edge for Fluid-Structure Interaction (FSI) or Conjugate Heat Transfer (CHT) problems
+       \end{itemize}
+    \end{minipage}%
+    \begin{minipage}{0.6\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{pictures/precice.png}
+        \caption{PreCICE couplings \citep{bungartz2016precice}}
+    \end{minipage}
+  \end{figure}
+    
+  \end{frame}
+
+
+\section{Future outlook}
+\frame{\tableofcontents[currentsection]}
+
+\subsection{Power users}
+\begin{frame}
+\frametitle{Power users}
+\begin{itemize}
+  \item  OpenFOAM has widespread use in academia (Groups at RWTH Aachen, TU Munich, KIT, TU Delft, Virginia Tech, Uni. Southampton, Cranfield University etc)
+  \item  OpenFOAM has a growing use in industry too, especially in Europe
+  \item The Volkswagen Group (Volkswagen, Audi, Porsche, MAN) 
+  \item The chemical industry: BASF,  Bayer, Covestro, Linde
+  \item Many, many FSAE and Hyperloop student teams 
+  \item Startups that base their solution on OpenFOAM - Simscale, CONSELF, Engys
+\end{itemize}
+
+
+\end{frame}
+
+
+\subsection{Opportunities: Why should you learn it?}
+\begin{frame}
+\frametitle{Opportunities: Why should you learn it?}
+\begin{itemize}
+  \item Allows you to learn theoretical aspects with code - a prerequisite to clearing any CFD interview
+  \item Thriving user community to help you learn (CFDOnline)
+  \item Excellent way to learn advanced C++: templates, polymorphism, MPI programming
+  \item Object oriented approach - easy to hit the ground running by copying solvers and tweaking things 
+\end{itemize}
+\end{frame}
+
+\bibliographystyle{abbrvnat} 
+\begin{frame}
+  \frametitle{References}
+  \nocite{jasak1996error}
+  \bibliography{reference_intern}
+\end{frame} 
+
+
+\end{document}
