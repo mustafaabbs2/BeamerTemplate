@@ -8,3 +8,4 @@
 *.gz
 *.toc
 *.out
+*.fdb_latexmk

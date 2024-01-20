@@ -230,9 +230,7 @@
 % ---------------------------------------------------------------------
 
 %% preamble
-\title[Introduction to OF Development]{Introduction to OpenFOAM Development}
- \subtitle{Unit 1: Getting Familiar}
- \author{Mustafa Bhotvawala, SkillLync}
+\title[Diving into SPH]{Diving into SPH}
 \institute[]{}
 \date{}
 % -------------------------------------------------------------
@@ -247,61 +245,129 @@
 \end{frame}
 
 
-\section{Your choices}
+\section{SPH: What I've understood} 
 \frame{\tableofcontents[currentsection]}
 
-\subsection{Your version choices}
-\begin{frame}
-\frametitle{Your version choices}
-\begin{itemize}
-  \item Often confusing to new users, there are two different versions of OpenFOAM available
-  \item OpenFOAM$^{\tiny{\text{\textregistered}}}$ is a trademark of ESI-OpenCFD, which distributes it through www.openfoam.com. 
-  \item The OpenFOAM Foundation, which has the permission to use the trademark too, distributes the software through www.openfoam.org
-  \item ESI-OpenCFD uses a naming convention like this: "v1806" for the version released in the middle of 2018
-  \item The OpenFOAM Foundation uses a convention like "v5.0". The number is not linked to the date of release
+\subsection{Recap}
 
-\end{itemize}
-\end{frame}
-
-
-\section{Want to code?}
-\frame{\tableofcontents[currentsection]}
-\subsection{Solvers}
-
-
-
-\subsection{Equations}
 \begin{frame}[fragile]
-\frametitle{Equations}
-A scalar transport equation as discretized in OpenFOAM
-\begin{figure}[!htb]
-  \centering
-  \begin{minipage}{.5\textwidth}
-   $$ \frac{\partial T}{\partial t}  + \mathbf{\nabla} \cdot (\mathbf{U} T)  - \mathbf{\nabla} \cdot (D \mathbf{\nabla} T)  $$
-  \end{minipage}%
-  \begin{minipage}{0.5\textwidth}
-      \centering
-      \begin{lstlisting}
-        solve
-(
-   fvm::ddt(T)             
- + fvm::div(phi, T)        
- - fvm::laplacian(DT, T)   
-);
-      \end{lstlisting}
-  \end{minipage}
-\end{figure}
-\end{frame}
+  \frametitle{Navier-Stokes Equations}
+  \framesubtitle{(Still N-S!)}
+  
+  The key idea is unchanged. You want to approximate the N-S equations as before, but not discretize your solution on a mesh. This is like any Lagrangian method. To recap the equations for continuum flow:
+  
+  \begin{itemize}
+    \item Continuity Equation:
+  \end{itemize}
+  
+  \[
+  \frac{D\rho}{Dt} = -\rho \nabla \cdot \mathbf{u}
+  \]
+  
+  \begin{itemize}
+    \item Momentum Equation:
+  \end{itemize}
+  
+  \[
+  \frac{D\mathbf{u}}{Dt} = -\frac{1}{\rho}\nabla P + \nu\nabla^2\mathbf{u} + \mathbf{f}
+  \]
   
   
+  \end{frame}
+
+  
+\begin{frame}[fragile]
+  \frametitle{Smoothed Particle Hydrodynamics (SPH)}
+  \framesubtitle{What makes it different}
+  
+  \begin{itemize}
+    \item SPH is mesh-free!
+    \item Free surface flows that are challenging in Eulerian methods are more or less natural in SPH
+  \end{itemize}
+  
+  \end{frame}
+  
+
+  \subsection{Equations}
+
+  \begin{frame}
+    \frametitle{Kernels}
+    \framesubtitle{Mathematical Form}
+
+    In 3D (also what I've implemented)
+    \begin{equation}
+      W(q) = \frac{21}{64\pi h^3} \cdot
+      \begin{dcases}
+        (2 - q)^4 (1 + 2q) & \text{if } 0 \leq q \leq 2 \\
+        0 & \text{otherwise}
+      \end{dcases}
+      \end{equation}
+    
+    where:
+    \begin{itemize}
+      \item Kernels just convolve over the function, and aim to be an approximation to the Dirac Delta function
+      \item It has compact support, which means the tail is not infitine, it takes a certain range of particles around it
+    \end{itemize}
+    
+    \end{frame}
+    
 
 
-\bibliographystyle{abbrvnat} 
-\begin{frame}
-  \frametitle{References}
-  \nocite{jasak1996error}
-  \bibliography{reference_intern}
-\end{frame} 
+
+  \begin{frame}[fragile]
+  \frametitle{SPH Equations}
+  \framesubtitle{Continuity}
+  
+  The approach in SPH is sto sum up contributions from neighbours.
+  
+  \[
+  \rho_a = \sum_{b} m_b \frac{W(\mathbf{r}_{ab}, h)}{\rho_b}
+  \]
+  
+  % \begin{lstlisting}
+  % rho[i] = sum_j(m[j] * W(r_ij, h) / rho[j])
+  % \end{lstlisting}
+  
+  where:
+  \begin{itemize}
+    \item \( W \) is the smoothing kernel function.
+    \item \( \mathbf{r}_{ab} \) is the vector from particle \( a \) to \( b \).
+    \item \( h \) is the smoothing length.
+  \end{itemize}
+  
+  \end{frame}
+
+
+
+    \begin{frame}[fragile]
+      \frametitle{SPH Equations}
+      \framesubtitle{Momentum}
+      
+      The kernel functions can be differentiated - and this is used in the gradient for pressure in the momentum equation. Pressure is calculated from the equation of state. 
+      
+      \begin{equation*}
+      \frac{D\mathbf{v}_a}{Dt} = -\sum_b m_b \left( \frac{P_a}{\rho_a^2} + \frac{P_b}{\rho_b^2} \right) \nabla_a W_{ab}(h)
+      + \nu \nabla^2 \mathbf{v}_a + \mathbf{f}_a
+      \end{equation*}
+      
+      where:
+      \begin{itemize}
+
+        \item \( P_a \) and \( P_b \), \( \rho_a \) and \( \rho_b \) are the pressures and densities of the current particle and its neighbours 
+        \item \( \nabla_a W_{ab}(h) \) is the gradient of the smoothing kernel between particles \( a \) and \( b \) with smoothing length \( h \).
+      \end{itemize}
+      
+      \end{frame}
+
+      
+      \section{Postprocessing} 
+      \frame{\tableofcontents[currentsection]}
+
+  \section{What I tried} 
+  \frame{\tableofcontents[currentsection]}
+      
+
+
 
 
 \end{document}
