@@ -9,9 +9,7 @@
 \usepackage{color,xcolor}
 \usepackage{graphicx}
 \usepackage{textcomp}
-\usepackage{algorithm} 
 \usepackage{graphics}
-\usepackage{mathcomp}
 \usepackage{textcomp}   
 \usepackage{amsmath,amssymb}
 \usepackage{array}
@@ -241,8 +239,6 @@
 
 
 
-\logo{\includegraphics[width=.2\textwidth]{pictures/header_logo.png}}
-
 \begin{document}
 
 %% title frame
@@ -250,55 +246,9 @@
     \titlepage
 \end{frame}
 
-\begin{frame}
-  \begin{tcolorbox}
-  OpenFOAM® and OpenCFD® are registered trademarks of OpenCFD Limited, the producer of the OpenFOAM software. All registered trademarks are property of their respective owners. This offering is not approved or endorsed by OpenCFD Limited, the producer of the OpenFOAM software and owner of the OPENFOAM® and OpenCFD® trade marks. Mustafa Bhotvawala and SkillLync are not associated to OpenCFD.
-  \end{tcolorbox}
-\end{frame}
-
-
-
-%% normal frame
-\section{What is OpenFOAM?}
-\frame{\tableofcontents[currentsection]}
-
-\subsection{OpenFOAM - Introducing the toolbox}
-\begin{frame}
-\frametitle{OpenFOAM- Introducing the toolbox}
-
-\begin{itemize}
-  \item OpenFOAM is not a 'solver', but a C++ toolbox that comes 
-  bundled with a range of solvers, pre- and post processing utilities
-  \item Expands to Open Field of Operation And Manipulation
-  \item The applications created by OpenFOAM fall into two categories: \texttt{solvers} and \texttt{utilities}
-  \item \texttt{solvers} are the actual executables for the final fluid mechanics problem. \texttt{simpleFoam} is a well known one.
-  \item \texttt{utilities} perform tasks that provide and manipulate input/output to/from the \texttt{solvers}. \texttt{snappyHexMesh} provides the mesh input, for example.
-\end{itemize}
-
-
-\end{frame}
-
-
-\subsection{Structure overview}
-\begin{frame}
-\frametitle{Structure overview}
-\begin{itemize}
-  \item OpenFOAM cases are divided into three main folders. 
-\end{itemize}
-
-\begin{figure}[h!]
-  \begin{center}
-    \scalebox{.75}{\input{pictures/2_ofStructure.tex}}
-  \caption{OpenFOAM case structure}
-  \label{fig:ofStructure}
-  \end{center}
-  \end{figure}
-
-\end{frame}
 
 \section{Your choices}
 \frame{\tableofcontents[currentsection]}
-
 
 \subsection{Your version choices}
 \begin{frame}
@@ -313,65 +263,10 @@
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Your version choices}
-
-  Which version to choose?
-
-
-  \begin{itemize}
-  \item When in doubt, check and compare the release notes!
-  \item Different foam versions can coexist on the same system
-  \item For community-driven solvers, especially ones in solid mechanics, a third variant, foam-extend is also popular
-  \item I prefer the ESI-OpenCFD version but it is a matter of personal preference
-  \end{itemize}
-
-
-
-  \begin{figure}[!htb]
-    \centering
-    \begin{minipage}{.5\textwidth}
-        \centering
-        \includegraphics[width=0.3\linewidth]{pictures/openfoam.png}
-        \caption{ESI-OpenCFD}
-    \end{minipage}%
-    \begin{minipage}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.2\linewidth]{pictures/openfoam_found.png}
-        \caption{OpenFOAM Foundation}
-    \end{minipage}
-\end{figure}
-    
-\end{frame}
-
-\subsection{Your OS choices}
-\begin{frame}
-  \frametitle{Your OS choices}
-  \begin{itemize}
-  \item I will discuss the ESI-OpenCFD version henceforth unless mentioned otherwise
-  \item OpenFOAM compiles natively on Linux environments - but this doesn't mean there aren't workarounds!
-  \item Linux binary installations can be done either via Docker or via RPM (OpenSUSE)
-  \item If you use Linux, I recommend compiling from source
-  \item If you use Windows, use the Windows Subsystem for Linux (WSL)
-  \item If not a WSL fan, there are mingw and Docker versions on Windows
-
-\end{itemize}
-\end{frame}
 
 \section{Want to code?}
 \frame{\tableofcontents[currentsection]}
 \subsection{Solvers}
-
-\begin{frame}
-  \frametitle{Solvers}
-  \begin{itemize}
-   \item Basic: Laplace, potential flow
-   \item General: Incompressible and compressible flow
-   \item Multiphase: Euler-Euler, VOF 
-   \item Lagrangian: spray, combustion
-   \item Heat transfer: buoyancy-driven flows, conjugate heat transfer (CHT)
-  \end{itemize}
-  \end{frame}
 
 
 
@@ -400,120 +295,6 @@ A scalar transport equation as discretized in OpenFOAM
   
   
 
-
-
-\section{Evolution of OpenFOAM}
-\frame{\tableofcontents[currentsection]}
-
-
-\subsection{Strong points}
-\begin{frame}
-\frametitle{Strong points}
-\begin{itemize}
-  \item Covered by a GNU Public License (GPL) - allows contribution to all these versions
-  \item CFD Simulation at no cost - ideal for learning!
-  \item Solver toolbox for a wide breadth of physical problems
-  \item Clear advantage if you have to implement new models in the code
-  \item Very active development
-  \item Industry leader in some areas, for example, viscoelastic models 
-\end{itemize}
-\end{frame}
-
-
-
-\subsection{State of the art}
-\begin{frame}
-\frametitle{State of the art}
-What's the new stuff? Some examples
-\begin{figure}[!htb]
-  \centering
-  \begin{minipage}{.4\textwidth}
-    \begin{itemize}
-      \item OpenFOAM 8 (Foundation) and OpenFOAM v2006 (ESI-OpenCFD) recently released
-      \item OpenFOAM v2006 brought new developments to a  gradient based optimization tool - adjoint method
-     \end{itemize}
-  \end{minipage}%
-  \begin{minipage}{0.4\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]{pictures/adjoint.png}
-      \caption{Improved adjoint method numerics (v2006)}
-  \end{minipage}
-\end{figure}
-  
-\end{frame}
-
-\begin{frame}
-\frametitle{State of the art}
-What's the new stuff? Some examples
-\begin{figure}[!htb]
-  \centering
-  \begin{minipage}{.4\textwidth}
-    \begin{itemize}
-      \item Curle Function Object for near field term and has been refactored to compute the acoustic pressure for a set of points
-     \end{itemize}
-  \end{minipage}%
-  \begin{minipage}{0.4\textwidth}
-      \centering
-      \includegraphics[width=\linewidth]{pictures/curle.png}
-      \caption{A new Curle Function Object for Aeroacoustics (v2006)}
-  \end{minipage}
-\end{figure}
-  
-\end{frame}
-
-
-
-
-\begin{frame}
-  \frametitle{State of the art}
-  Coupling 
-  \begin{figure}[!htb]
-    \centering
-    \begin{minipage}{.4\textwidth}
-      \begin{itemize}
-        \item OpenFOAM can be coupled with preCICE, a coupling library for partitioned multi-physics simulations
-        \item This gives OpenFOAM an edge for Fluid-Structure Interaction (FSI) or Conjugate Heat Transfer (CHT) problems
-       \end{itemize}
-    \end{minipage}%
-    \begin{minipage}{0.6\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{pictures/precice.png}
-        \caption{PreCICE couplings \citep{bungartz2016precice}}
-    \end{minipage}
-  \end{figure}
-    
-  \end{frame}
-
-
-\section{Future outlook}
-\frame{\tableofcontents[currentsection]}
-
-\subsection{Power users}
-\begin{frame}
-\frametitle{Power users}
-\begin{itemize}
-  \item  OpenFOAM has widespread use in academia (Groups at RWTH Aachen, TU Munich, KIT, TU Delft, Virginia Tech, Uni. Southampton, Cranfield University etc)
-  \item  OpenFOAM has a growing use in industry too, especially in Europe
-  \item The Volkswagen Group (Volkswagen, Audi, Porsche, MAN) 
-  \item The chemical industry: BASF,  Bayer, Covestro, Linde
-  \item Many, many FSAE and Hyperloop student teams 
-  \item Startups that base their solution on OpenFOAM - Simscale, CONSELF, Engys
-\end{itemize}
-
-
-\end{frame}
-
-
-\subsection{Opportunities: Why should you learn it?}
-\begin{frame}
-\frametitle{Opportunities: Why should you learn it?}
-\begin{itemize}
-  \item Allows you to learn theoretical aspects with code - a prerequisite to clearing any CFD interview
-  \item Thriving user community to help you learn (CFDOnline)
-  \item Excellent way to learn advanced C++: templates, polymorphism, MPI programming
-  \item Object oriented approach - easy to hit the ground running by copying solvers and tweaking things 
-\end{itemize}
-\end{frame}
 
 \bibliographystyle{abbrvnat} 
 \begin{frame}
