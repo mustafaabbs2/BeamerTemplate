@@ -294,7 +294,7 @@
     \frametitle{Kernels}
     \framesubtitle{Mathematical Form}
 
-    In 3D (also what I've implemented)
+    In 3D and 4th order (also what I've used)
     \begin{equation}
       W(q) = \frac{21}{64\pi h^3} \cdot
       \begin{dcases}
@@ -307,7 +307,12 @@
     \begin{itemize}
       \item Kernels just convolve over the function, and aim to be an approximation to the Dirac Delta function
       \item It has compact support, which means the tail is not infitine, it takes a certain range of particles around it
+      \item A kernel function must be consistent, i.e.:
     \end{itemize}
+
+    \begin{equation}
+      \int_{-\infty}^{\infty} W(q) \, dq = 1
+      \end{equation}
     
     \end{frame}
     
@@ -320,9 +325,9 @@
   
   The approach in SPH is sto sum up contributions from neighbours.
   
-  \[
+  \begin{equation}
   \rho_a = \sum_{b} m_b \frac{W(\mathbf{r}_{ab}, h)}{\rho_b}
-  \]
+  \end{equation}
   
   % \begin{lstlisting}
   % rho[i] = sum_j(m[j] * W(r_ij, h) / rho[j])
@@ -345,10 +350,10 @@
       
       The kernel functions can be differentiated - and this is used in the gradient for pressure in the momentum equation. Pressure is calculated from the equation of state. 
       
-      \begin{equation*}
+      \begin{equation}
       \frac{D\mathbf{v}_a}{Dt} = -\sum_b m_b \left( \frac{P_a}{\rho_a^2} + \frac{P_b}{\rho_b^2} \right) \nabla_a W_{ab}(h)
       + \nu \nabla^2 \mathbf{v}_a + \mathbf{f}_a
-      \end{equation*}
+      \end{equation}
       
       where:
       \begin{itemize}
@@ -362,6 +367,25 @@
       
       \section{Postprocessing} 
       \frame{\tableofcontents[currentsection]}
+
+      \begin{frame}
+
+      \frametitle{Numerical quantities}
+      \framesubtitle{Kernel Weighted Interpolation}
+      
+      \begin{itemize}
+       \item Postprocessing of SPH would involve interpolation of the same nature to obtain a numerical quantity from particle quantities
+       \item We renormalize the interpolation using a Shepherd summation in the denominator
+        \item  For instance, the numerical pressure \(P_a\) at particle \(a\) can be computed as a weighted sum of neighbour particles
+
+       \[
+        P_a = \frac{\sum_b P_b \frac{m_b}{\rho_b} W_{ab}}{\sum_b \frac{m_b}{\rho_b} W_{ab}}
+        \]
+
+      \end{itemize}
+
+      \end{frame}
+
 
   \section{What I tried} 
   \frame{\tableofcontents[currentsection]}
