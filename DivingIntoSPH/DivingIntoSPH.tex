@@ -259,6 +259,7 @@
 
 %% preamble
 \title[Diving into SPH]{Diving into SPH}
+\author{Mustafa Bhotvawala}
 \institute[]{}
 \date{}
 % -------------------------------------------------------------
@@ -596,12 +597,12 @@
     \frametitle{Interpolation}
     \framesubtitle{Control Volume}
 
-    (I think the time was beyond the scope for me to implement this, but this is what I thought about)
+    (I think the time was beyond the scope for me to implement this, but this is what I considered. This should apply to all quantities - flux and primitives alike)
     \begin{block}{Pseudoalgorithm}
       \begin{enumerate}
         \item Define a search radius = smoothing length $h$ for each particle (not sure, but could be a start)
         \item For each grid segment, look for neighbors within the radius $h$. Find atleast one point particle.
-        \item Calculate value of numerical quantity using Shephard normalization and use value for grid segment
+        \item Calculate value of numerical quantity using Shephard normalization and use value for grid segment. This is essentially a projection onto the cell centroid.
         \item Do Riemann sum over grid for total value on surface 
       \end{enumerate}
     \end{block}
