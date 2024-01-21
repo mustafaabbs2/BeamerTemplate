@@ -235,6 +235,26 @@
   tabsize=2,
 }
 
+
+\lstdefinestyle{python}{
+    language=Python,
+    basicstyle=\ttfamily\scriptsize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    stepnumber=1,
+    backgroundcolor=\color{white},
+    frame=single,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=false,
+}
 % ---------------------------------------------------------------------
 
 %% preamble
@@ -449,19 +469,128 @@
       \end{frame}
       
     
-  \subsection{Test Case}
+      
+      
+    \begin{frame}[fragile]
+    \frametitle{A Simple Solver}
+    \framesubtitle{Main loop}
+    
+    \begin{lstlisting}
+      for(auto& p : particles)
+      {
+          // From https://www.cs.cmu.edu/~scoros/cs15467-s16/lectures/11-fluids2.pdf
+          p.vx += dt * p.fx / p.density;
+          p.vy += dt * (p.fy / p.density - g); //add gravity here
+          p.x += dt * p.vx;
+          p.y += dt * p.vy;
+          //recalculate forces in the next step
+          p.fx = 0.0;
+          p.fy = 0.0;
+        }
+        // Calculate density and pressure forces
+        for(auto& p : particles)
+        {
+          p.density = calculateDensity(particles, p);
+        }
+        calculatePressureForce(particles);
+        \end{lstlisting}
+    
+      \end{frame}
 
+      \begin{frame}
+        \frametitle{Just gravity}
+        \framesubtitle{(Not much, but I'm glad I could get something basic up)}
+
+        \begin{figure}
+          \centering
+          \includegraphics[width=0.5\linewidth]{pictures/solver_test.png} 
+        \end{figure}
+        
+        *Using PyVista for this
+      
+      \end{frame}
+      
+  \subsection{Problem Statement}
+
+  \begin{frame}
+    \frametitle{Dam Break}
+    \framesubtitle{PyVista Visualization}
+    
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.8\linewidth]{pictures/domain_10000.png} 
+      \caption{Domain at the end of the run}
+    \end{figure}
+  
+  \end{frame}
+ 
+  
+  \begin{frame}[fragile]
+    \frametitle{Dam Break}
+    \framesubtitle{Generating CV Mesh}
+    
+    \begin{lstlisting}[style = python]
+      def write_to_stl():
+        x_resolution = 10
+        y_resolution = 10
+    
+        x = np.linspace(0.07, 0.17, x_resolution)
+        y = np.linspace(0.07, 0.17, y_resolution)
+        z = np.zeros(1)  # 2D box, so z dimension has only one value
+    
+        grid = pv.RectilinearGrid()
+        grid.x = x
+        grid.y = y
+        grid.z = z
+    
+        mesh = grid.cast_to_structured_grid().extract_surface()
+        mesh.save("output.stl")
+        mesh.plot("show_edges=True")
+    \end{lstlisting}
+    
+  \end{frame}
+  
+
+  
 
   \begin{frame}[fragile]
-    \frametitle{A Simple Solver}
-    \framesubtitle{Density}
+    \frametitle{Dam Break}
+    \framesubtitle{Recovering Mesh in Nemo}
     
-    \begin{itemize}
-      \item hello
+    \begin{lstlisting}[style = python]
+    def read_into_nemo(): #note I could only read back an STL, so it's going to be triangulated..
+        mesh =  n.Mesh.load(n.File("output.stl"))
+        segmentcloud = mesh.data
+        areas =  mesh.get_surface_area_per_segment()
+        normals = segmentcloud.get_segment_normals()
+  
+      #  print(segmentcloud.point_attributes) #-->empty dict, how to proceed?
+      #  print(segmentcloud.point_attributes["face_normal"])# KeyError: 'face_normal'
+        
+        #Riemann sum of a unit vector
+        dot_product = np.sum(normals, axis=1) #horizontally sum across normals -> 1
+        riemann_sum = np.sum(dot_product * areas)
+      
+        print('Riemann sum is:')
+        print(mesh.get_surface_area())
+        print(riemann_sum)
+    \end{lstlisting}
+    
+  \end{frame}
 
-    \end{itemize}
+  
+  \begin{frame}
+    \frametitle{Dam Break}
+    \framesubtitle{Control Volume}
     
-    \end{frame}
-    
-
-\end{document}
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.5\linewidth]{pictures/control_volume.png} 
+      \caption{Displaying the triangulated CV}
+    \end{figure}
+  
+  \end{frame}
+  
+  
+  
+  \end{document}
