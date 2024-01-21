@@ -209,22 +209,30 @@
 }
 % ---------------------------------------------------------------------
 
-% code setting
+% Define colors similar to VSCode C++ syntax highlighting
+\definecolor{vscodeblue}{rgb}{0, 0.27, 0.65}
+\definecolor{vscodegreen}{rgb}{0, 0.5, 0}
+\definecolor{vscodepurple}{rgb}{0.51, 0, 0.51}
+\definecolor{vscodegray}{rgb}{0.3, 0.3, 0.3}
+\definecolor{vscodeorange}{rgb}{0.8, 0.4, 0}
+\definecolor{vscodecomment}{rgb}{0.47, 0.53, 0.6}
+\definecolor{vscodestring}{rgb}{0.8, 0, 0}
+
+% Set up the listings package for C++ code with VSCode-like coloring
 \lstset{
-    language=C++,
-    basicstyle=\ttfamily\footnotesize,
-    keywordstyle=\color{red},
-    breaklines=true,
-    xleftmargin=2em,
-    frame=shadowbox,
-    rulecolor=\color{black},
-    commentstyle=\color{lightgray}
-    tabsize=4,
-    breakatwhitespace=false,
-    showspaces=false,               
-    showstringspaces=false,
-    showtabs=false,
-    morekeywords={Str, Num, List},
+  language=C++,
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{vscodeblue},
+  commentstyle=\color{vscodecomment},
+  stringstyle=\color{vscodestring},
+  numberstyle=\tiny\color{vscodegray},
+  identifierstyle=\color{black},
+  emphstyle=\color{vscodeorange},
+  frame=single,
+  numbers=left,
+  showstringspaces=false,
+  breaklines=true,
+  tabsize=2,
 }
 
 % ---------------------------------------------------------------------
@@ -389,9 +397,71 @@
 
   \section{What I tried} 
   \frame{\tableofcontents[currentsection]}
+
+  \subsection{A Simple Solver}
       
+  \begin{frame}[fragile]
+    \frametitle{A Simple Solver}
+    \framesubtitle{Pressure Force}
+    
+    \begin{lstlisting}
+      for(const auto& other : particles)
+      {
+        if(&p != &other)
+        {
+          double r = distance(p, other);
+          if(r > 0)
+          {
+            double pj = calculatePressureTait(other);
+            double rhoj = other.density;
+  
+            double w_press = wendlandGradient2D(r); 
+  
+            pressureForceX +=
+              other.mass * (pi / (rhoi * rhoi) + pj / (rhoj * rhoj)) * w_press;
+            pressureForceY +=
+              other.mass * (pi / (rhoi * rhoi) + pj / (rhoj * rhoj)) * w_press;
+          }
+        }
+      }
+    \end{lstlisting}
+    
+    \end{frame}
 
 
+    \begin{frame}[fragile]
+      \frametitle{A Simple Solver}
+      \framesubtitle{Density}
+      
+      \begin{lstlisting}
+        double calculateDensity(const std::vector<Particle>& particles, const Particle& p)
+        {
+          double density = 0.0;
+          for(const auto& other : particles)
+          {
+            double r = distance(p, other);
+            density += other.mass * wendlandKernel2D(r);
+          }
+          return density;
+        }
+      \end{lstlisting}
+      
+      \end{frame}
+      
+    
+  \subsection{Test Case}
 
+
+  \begin{frame}[fragile]
+    \frametitle{A Simple Solver}
+    \framesubtitle{Density}
+    
+    \begin{itemize}
+      \item hello
+
+    \end{itemize}
+    
+    \end{frame}
+    
 
 \end{document}
