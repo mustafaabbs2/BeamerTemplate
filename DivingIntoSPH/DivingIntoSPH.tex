@@ -553,12 +553,21 @@
     
   \end{frame}
   
+  \begin{frame}
 
+    
+    \begin{figure}
+      \centering
+      \includegraphics[width=0.4\linewidth]{pictures/control_volume_2.png} 
+      \caption{Creating a control volume of the dimensions and location of the leftmost box}
+    \end{figure}
+  
+  \end{frame}
   
 
   \begin{frame}[fragile]
     \frametitle{Dam Break}
-    \framesubtitle{Recovering Mesh in Nemo}
+    \framesubtitle{Recovering Surface Mesh in Nemo}
     
     \begin{lstlisting}[style = python]
     def read_into_nemo(): #note I could only read back an STL, so it's going to be triangulated..
@@ -588,7 +597,7 @@
     \begin{figure}
       \centering
       \includegraphics[width=0.5\linewidth]{pictures/control_volume.png} 
-      \caption{Displaying the triangulated CV}
+      \caption{Displaying the triangulated CV volume. Triangulated because I could only import back an STL and not a structured grid cast to a .vtu}
     \end{figure}
   
   \end{frame}
