@@ -604,7 +604,7 @@
   
   \begin{frame}
     \frametitle{Interpolation}
-    \framesubtitle{Control Volume}
+    \framesubtitle{Pseudoalgorithm}
 
     (I think the time was beyond the scope for me to implement this, but this is what I considered. This should apply to all quantities - flux and primitives alike)
     \begin{block}{Pseudoalgorithm}
@@ -615,9 +615,23 @@
         \item Do Riemann sum over grid for total value on surface 
       \end{enumerate}
     \end{block}
-  
 
-  
+    
   \end{frame}
   
+  \begin{frame}
+    \frametitle{Interpolation}
+    \framesubtitle{Considerations}
+
+      \begin{itemize}
+        \item Using the closest point (Voronoi) may not be the best way for consistency, instead anything that defines the local neighborhood more accurately
+        \item A Shepherd interpolation, where the sum of the neigbourhood values is 1, can be more consistent for post-processing
+        \item The problem with consistency might be highlighted at flow boundaries (but I need to read more about this to give you a strong opinion)
+        \item In general, and for post-processing, the location of neighbours can be the expensive step, it probably makes sense to have something similar to a k-d tree as a pre-processing step
+      \end{itemize}
+
+    
+  \end{frame}
+
+
   \end{document}
